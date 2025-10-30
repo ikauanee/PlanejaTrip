@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotéis e Táxis em Pernambuco</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .main-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .main-tab-button {
+            flex: 1;
+            padding: 1rem;
+            background-color: #e6f0ff;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #2a5298;
+            font-size: 1.1rem;
+        }
+        
+        .main-tab-button:hover {
+            background-color: #d0e2ff;
+        }
+        
+        .main-tab-button.active {
+            background-color: #2a5298;
+            color: white;
+        }
+        
+        .main-tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .main-tab-content.active {
+            display: block;
+        }
+        
+        /* Estilos para a seção de hotéis */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #e6f0ff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #2a5298;
+        }
+        
+        .tab-button:hover {
+            background-color: #d0e2ff;
+            transform: translateY(-2px);
+        }
+        
+        .tab-button.active {
+            background-color: #2a5298;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .city-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .city-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #2a5298;
+        }
+        
+        .city-title {
+            font-size: 1.8rem;
+            color: #2a5298;
+        }
+        
+        .hotel-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .hotel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .hotel-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .hotel-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .hotel-name {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2a5298;
+        }
+        
+        .hotel-description {
+            margin-bottom: 1.5rem;
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        .hotel-link {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: #2a5298;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .hotel-link:hover {
+            background-color: #1e3c72;
+        }
+        
+        /* Estilos para a seção de táxis */
+        .info-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tarifas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tarifa-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tarifa-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: #3498db;
+            color: white;
+            padding: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .rota-info {
+            margin-bottom: 1rem;
+        }
+        
+        .rota-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .preco {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            background-color: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-button {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .city-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .city-icon {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .hotel-image {
+                height: 200px;
+            }
+            
+            .tarifas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hotéis e Táxis em Pernambuco</h1>
+        <p class="subtitle">Encontre hospedagem e transporte para suas viagens pelo estado</p>
+    </header>
+    
+    <div class="container">
+        <div class="main-tabs">
+            <button class="main-tab-button active" data-main-tab="hoteis">Hotéis</button>
+            <button class="main-tab-button" data-main-tab="taxis">Tarifas de Táxi</button>
+        </div>
+        
+        <!-- SEÇÃO DE HOTÉIS -->
+        <div id="hoteis" class="main-tab-content active">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="gravata">Gravatá</button>
+                <button class="tab-button" data-tab="bezerros">Bezerros</button>
+                <button class="tab-button" data-tab="arcoverde">Arcoverde</button>
+                <button class="tab-button" data-tab="sao-jose-egito">São José do Egito</button>
+                <button class="tab-button" data-tab="petrolina">Petrolina</button>
+                <button class="tab-button" data-tab="caruaru">Caruaru</button>
+                <button class="tab-button" data-tab="serra-talhada">Serra Talhada</button>
+                <button class="tab-button" data-tab="araripina">Araripina</button>
+                <button class="tab-button" data-tab="recife">Recife</button>
+            </div>
+            
+            <!-- Gravatá -->
+            <div id="gravata" class="tab-content active">
+                <div class="city-header">
+                    <div class="city-icon">🏔️</div>
+                    <h2 class="city-title">Hotéis em Gravatá</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Gravatá" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Gravatá</h3>
+                        <p class="hotel-description">Descubra as melhores opções de hospedagem na charmosa cidade de Gravatá, conhecida como a "Suíça Pernambucana". Encontre pousadas aconchegantes, hotéis-fazenda e resorts com toda a estrutura para seu conforto e lazer.</p>
+                        <a href="https://www.trivago.com.br/pt-BR/lm/hot%C3%A9is-gravat%C3%A1-brasil?search=200-114141;411-2;rc-1-1#::hasInteracted=true" target="_blank" class="hotel-link">Ver Hotéis em Gravatá</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bezerros -->
+            <div id="bezerros" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🎭</div>
+                    <h2 class="city-title">Hotéis em Bezerros</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Bezerros" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Bezerros</h3>
+                        <p class="hotel-description">Encontre as melhores opções de hospedagem em Bezerros, cidade rica em cultura e tradições. Conheça pousadas charmosas e hotéis com ótima localização para explorar as belezas e o artesanato local.</p>
+                        <a href="https://www.booking.com/searchresults.pt-br.html?label=cht532js-10CAMoIEILYmV6ZXJyb3MtYnJILVgDaCCIAQGYATO4ARfIAQzYAQPoAQH4AQGIAgGoAgG4AvuejcgGwAIB0gIkZmQwOWExMmItMjNhOS00YTNmLTg3ZmYtNTJhOWE2MTFlNjhi2AIB4AIB&aid=2440491&checkin=2025-11-05&checkout=2025-11-06&dest_id=-629320&dest_type=city&group_adults=1&req_adults=1&no_rooms=1&group_children=0&req_children=0" target="_blank" class="hotel-link">Ver Hotéis em Bezerros</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Arcoverde -->
+            <div id="arcoverde" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🏜️</div>
+                    <h2 class="city-title">Hotéis em Arcoverde</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Arcoverde" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Arcoverde</h3>
+                        <p class="hotel-description">Descubra opções de hospedagem em Arcoverde, importante cidade do sertão pernambucano. Encontre hotéis confortáveis e pousadas acolhedoras para sua estadia nesta cidade que é porta de entrada para o interior do estado.</p>
+                        <a href="https://www.trivago.com.br/pt-BR/lm/hot%C3%A9is-arcoverde-brasil?search=200-59144;411-2;105-1322;105-1320;rc-1-1" target="_blank" class="hotel-link">Ver Hotéis em Arcoverde</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- São José do Egito -->
+            <div id="sao-jose-egito" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">⛰️</div>
+                    <h2 class="city-title">Hotéis em São José do Egito</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em São José do Egito" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis São José do Egito</h3>
+                        <p class="hotel-description">Encontre hospedagem em São José do Egito, cidade do sertão do Pajeú conhecida por sua cultura e tradições. Descubra hotéis e pousadas que oferecem conforto e hospitalidade típica do interior pernambucano.</p>
+                        <a href="https://www.booking.com/searchresults.pt-br.html?ss=S%C3%A3o+Jos%C3%A9+do+Egito&ssne=S%C3%A3o+Jos%C3%A9+do+Egito&ssne_untouched=S%C3%A3o+Jos%C3%A9+do+Egito&efdco=1&label=cht532js-10CAMoIEIRc2FvLWpvc2UtZG8tZWdpdG9ILVgDaCCIAQGYATO4ARfIAQzYAQPoAQH4AQGIAgGoAgG4AraijcgGwAIB0gIkYTgwMTE1MDItNDdmZS00ZDc0LWE2MjgtNmQxZmUzYzA3YjNk2AIB4AIB&aid=2440491&lang=pt-br&sb=1&src_elem=sb&src=city&dest_id=-671372&dest_type=city&checkin=2025-11-03&checkout=2025-11-05&group_adults=1&no_rooms=1&group_children=0&sb_travel_purpose=leisure&sb_lp=1" target="_blank" class="hotel-link">Ver Hotéis em São José do Egito</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Petrolina -->
+            <div id="petrolina" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🍇</div>
+                    <h2 class="city-title">Hotéis em Petrolina</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Petrolina" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Petrolina</h3>
+                        <p class="hotel-description">Encontre as melhores opções de hospedagem em Petrolina, importante cidade do Vale do São Francisco. Descubra hotéis com ótima localização, próximos ao centro, ao Rio São Francisco e à região de fruticultura.</p>
+                        <a href="https://www.trivago.com.br/pt-BR/lm/hot%C3%A9is-petrolina-brasil?search=200-59162;411-2;105-1320;105-1318;rc-1-1" target="_blank" class="hotel-link">Ver Hotéis em Petrolina</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Caruaru -->
+            <div id="caruaru" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🧵</div>
+                    <h2 class="city-title">Hotéis em Caruaru</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Caruaru" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Caruaru</h3>
+                        <p class="hotel-description">Descubra opções de hospedagem em Caruaru, a capital do forró e do artesanato. Encontre hotéis próximos à Feira de Caruaru, ao Alto do Moura e a todos os pontos turísticos desta cidade vibrante e cultural.</p>
+                        <a href="https://www.booking.com/searchresults.pt-br.html?label=cht532js-10CAMoIEIRc2FvLWpvc2UtZG8tZWdpdG9ILVgDaCCIAQGYATO4ARfIAQzYAQPoAQH4AQGIAgGoAgG4AraijcgGwAIB0gIkYTgwMTE1MDItNDdmZS00ZDc0LWE2MjgtNmQxZmUzYzA3YjNk2AIB4AIB&aid=2440491&ss=Caruaru%2C+Pernambuco%2C+Brasil&ssne=Petrolina&ssne_untouched=Petrolina&lang=pt-br&src=searchresults&dest_id=-636034&dest_type=city&ac_position=0&ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=5&search_selected=true&search_pageview_id=831e536b723d155e&checkin=2025-11-03&checkout=2025-11-05&group_adults=1&no_rooms=1&group_children=0&nflt=class%3D4%3Bmealplan%3D1" target="_blank" class="hotel-link">Ver Hotéis em Caruaru</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Serra Talhada -->
+            <div id="serra-talhada" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🗿</div>
+                    <h2 class="city-title">Hotéis em Serra Talhada</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Serra Talhada" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Serra Talhada</h3>
+                        <p class="hotel-description">Encontre hospedagem em Serra Talhada, terra de Lampião e rica em história e cultura sertaneja. Descubra hotéis e pousadas que oferecem conforto e a autêntica hospitalidade do povo do sertão pernambucano.</p>
+                        <a href="https://www.trivago.com.br/pt-BR/lm/hot%C3%A9is-serra-talhada-brasil?search=200-59164;411-2;105-1322;105-1320;105-1318;rc-1-1" target="_blank" class="hotel-link">Ver Hotéis em Serra Talhada</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Araripina -->
+            <div id="araripina" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">⛏️</div>
+                    <h2 class="city-title">Hotéis em Araripina</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Araripina" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Araripina</h3>
+                        <p class="hotel-description">Descubra opções de hospedagem em Araripina, importante polo de produção de gesso no Nordeste. Encontre hotéis confortáveis para sua estadia nesta cidade que é referência econômica na região do Araripe.</p>
+                        <a href="https://www.booking.com/searchresults.pt-br.html?label=cht532js-10CAMoIEIRc2FvLWpvc2UtZG8tZWdpdG9ILVgDaCCIAQGYATO4ARfIAQzYAQPoAQH4AQGIAgGoAgG4AraijcgGwAIB0gIkYTgwMTE1MDItNDdmZS00ZDc0LWE2MjgtNmQxZmUzYzA3YjNk2AIB4AIB&aid=2440491&ss=Araripina%2C+Pernambuco%2C+Brasil&ssne=Serra+Talhada&ssne_untouched=Serra+Talhada&lang=pt-br&src=searchresults&dest_id=-625883&dest_type=city&ac_position=0&ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=4&search_selected=true&search_pageview_id=1c0753b1e0cc021c&checkin=2025-11-03&checkout=2025-11-05&group_adults=1&no_rooms=1&group_children=0&nflt=mealplan%3D1%3Bclass%3D4%3Bclass%3D5" target="_blank" class="hotel-link">Ver Hotéis em Araripina</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recife -->
+            <div id="recife" class="tab-content">
+                <div class="city-header">
+                    <div class="city-icon">🌊</div>
+                    <h2 class="city-title">Hotéis em Recife</h2>
+                </div>
+                <div class="hotel-card">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hotel em Recife" class="hotel-image">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Hotéis Recife</h3>
+                        <p class="hotel-description">Encontre as melhores opções de hospedagem na capital pernambucana. Descubra hotéis na orla de Boa Viagem, no Recife Antigo e em outras regiões da cidade. Desde pousadas econômicas até resorts de luxo, temos opções para todos os gostos e orçamentos.</p>
+                        <a href="https://www.trivago.com.br/pt-BR/lm/hot%C3%A9is-recife-brasil?search=200-59140;411-2;105-1322;105-1320;rc-1-1" target="_blank" class="hotel-link">Ver Hotéis em Recife</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEÇÃO DE TÁXIS -->
+        <div id="taxis" class="main-tab-content">
+            <div class="info-box">
+                <h2>Informações Gerais</h2>
+                <p>Este site apresenta estimativas de preços de táxi de Recife para várias cidades. Os valores são calculados com base na tarifa oficial de táxi de Recife.</p>
+                <p><strong>Tarifa básica:</strong> R$ 6,21</p>
+                <p><strong>Preço por quilômetro:</strong> R$ 3,78</p>
+                <p><strong>Tempo de espera (por hora):</strong> R$ 20,00</p>
+                <p><em>Nota: Os valores são apenas estimativas e podem variar conforme condições de tráfego, tempo de espera e outros fatores.</em></p>
+            </div>
+            
+            <h2>Destinos Disponíveis</h2>
+            <div class="tarifas-grid">
+                <!-- Cada cartão representa uma rota -->
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Abreu e Lima</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>20,4 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>22 min</span></p>
+                        </div>
+                        <div class="preco">R$ 83,40</div>
+                        <a href="Sua tarifa de táxi de Recife para Abreu e Lima.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Arcoverde</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>252,7 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>178 min</span></p>
+                        </div>
+                        <div class="preco">R$ 961,30</div>
+                        <a href="Sua tarifa de táxi de Recife para Arcoverde.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Bezerros</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>103,6 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>72 min</span></p>
+                        </div>
+                        <div class="preco">R$ 397,90</div>
+                        <a href="Sua tarifa de táxi de Recife para Bezerros.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Cabo de Santo Agostinho</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>33,4 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>27 min</span></p>
+                        </div>
+                        <div class="preco">R$ 132,30</div>
+                        <a href="Sua tarifa de táxi de Recife para Cabo de Santo Agostinho.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Camaragibe</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>12,6 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>15 min</span></p>
+                        </div>
+                        <div class="preco">R$ 53,80</div>
+                        <a href="Sua tarifa de táxi de Recife para Camaragibe.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Gravatá</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>83,1 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>275 min</span></p>
+                        </div>
+                        <div class="preco">R$ 320,50</div>
+                        <a href="Sua tarifa de táxi de Recife para Gravatá.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Ipojuca</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>49,8 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>41 min</span></p>
+                        </div>
+                        <div class="preco">R$ 194,30</div>
+                        <a href="Sua tarifa de táxi de Recife para Ipojuca.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Jaboatão dos Guararapes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>17,4 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>17 min</span></p>
+                        </div>
+                        <div class="preco">R$ 71,90</div>
+                        <a href="Sua tarifa de táxi de Recife para Jaboatão dos Guararapes.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Olinda</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>8,4 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>12 min</span></p>
+                        </div>
+                        <div class="preco">R$ 38,00</div>
+                        <a href="Sua tarifa de táxi de Recife para Olinda.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Paulista</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>16,7 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>20 min</span></p>
+                        </div>
+                        <div class="preco">R$ 69,20</div>
+                        <a href="Sua tarifa de táxi de Recife para Paulista.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → São José do Egito</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>348,3 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>318 min</span></p>
+                        </div>
+                        <div class="preco">R$ 1.322,90</div>
+                        <a href="Sua tarifa de táxi de Recife para São José do Egito.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+                
+                <div class="tarifa-card">
+                    <div class="card-header">
+                        <h3>Recife → Ibura (Recife)</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="rota-info">
+                            <p><span>Distância:</span> <span>13,0 km</span></p>
+                            <p><span>Tempo estimado:</span> <span>23 min</span></p>
+                        </div>
+                        <div class="preco">R$ 55,30</div>
+                        <a href="Sua tarifa de táxi em Recife.pdf" class="btn" target="_blank">Ver Detalhes (PDF)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Hotéis e Táxis em Pernambuco &copy; 2025</p>
+        <p>Encontre as melhores opções de hospedagem e transporte em todo o estado</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Controle das abas principais (Hotéis e Táxis)
+            const mainTabButtons = document.querySelectorAll('.main-tab-button');
+            const mainTabContents = document.querySelectorAll('.main-tab-content');
+            
+            mainTabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove a classe active de todos os botões principais
+                    mainTabButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Adiciona a classe active ao botão principal clicado
+                    this.classList.add('active');
+                    
+                    // Oculta todo o conteúdo das abas principais
+                    mainTabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Mostra o conteúdo da aba principal correspondente
+                    const mainTabId = this.getAttribute('data-main-tab');
+                    document.getElementById(mainTabId).classList.add('active');
+                });
+            });
+            
+            // Controle das abas secundárias (cidades para hotéis)
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove a classe active de todos os botões
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Adiciona a classe active ao botão clicado
+                    this.classList.add('active');
+                    
+                    // Oculta todo o conteúdo das abas
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Mostra o conteúdo da aba correspondente
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
